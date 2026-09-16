@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Supportive web companion for people affected by depression — awareness, chat, and mood tracking. Not a substitute for professional care." />
+  <title>Depression Support Companion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <h1 class="logo">Depression Support Companion</h1>
+      <p class="tagline">A calm space to talk about low mood and depression — with empathy, not judgment.</p>
+    </div>
+    <div class="nav-row">
+      <nav class="main-nav" aria-label="Main">
+        <button type="button" class="nav-btn is-active" data-panel="chat">Chat</button>
+        <button type="button" class="nav-btn" data-panel="mood">Mood</button>
+        <button type="button" class="nav-btn" data-panel="wellness">Wellness</button>
+        <button type="button" class="nav-btn" data-panel="about">About</button>
+      </nav>
+      <a class="btn btn-secondary btn-logout" href="/index.php?logout=1">Logout</a>
+    </div>
+  </header>
+
+  <main id="main" class="main">
+    <aside class="disclaimer" role="note">
+      <strong>Important:</strong> This app does not diagnose depression or replace therapy or medical care. It offers general support and self-care ideas. Depression is treatable — a doctor or therapist can help. If you are in crisis, use the resources shown when prompted or call your local crisis line.
+      <p id="api-status" class="api-status" aria-live="polite"></p>
+      <div id="connection-notice" class="connection-notice" hidden></div>
+    </aside>
+
+    <section id="panel-chat" class="panel is-visible" aria-labelledby="chat-heading">
+      <h2 id="chat-heading" class="visually-hidden">Conversation</h2>
+      <div id="crisis-banner" class="crisis-banner hidden" role="alert">
+        <p class="crisis-banner__text"></p>
+        <ul class="crisis-banner__actions">
+          <li>Contact your local crisis line or emergency services now.</li>
+        </ul>
+      </div>
+      <div id="chat-messages" class="chat-messages" aria-live="polite" aria-relevant="additions"></div>
+      <form id="chat-form" class="chat-form">
+        <label for="user-input" class="visually-hidden">Your message</label>
+        <textarea id="user-input" name="message" rows="2" placeholder="Share how depression or low mood is showing up for you today…" autocomplete="off"></textarea>
+        <button type="submit" class="btn btn-primary">Send</button>
+      </form>
+    </section>
+
+    <section id="panel-mood" class="panel" hidden aria-labelledby="mood-heading">
+      <h2 id="mood-heading">Daily mood &amp; energy</h2>
+      <p class="panel-intro">Track how heavy or light your days feel. Useful for noticing patterns (not a diagnosis). Saved on this device and (if the server is running) also saved to the admin database.</p>
+      <form id="mood-form" class="mood-form">
+        <fieldset>
+          <legend>How are you feeling today?</legend>
+          <div class="mood-scale" role="group" aria-label="Mood from low to high">
+            <label><input type="radio" name="mood" value="1" /> Very low</label>
+            <label><input type="radio" name="mood" value="2" /> Low</label>
+            <label><input type="radio" name="mood" value="3" checked /> Okay</label>
+            <label><input type="radio" name="mood" value="4" /> Good</label>
+            <label><input type="radio" name="mood" value="5" /> Great</label>
+          </div>
+        </fieldset>
+        <label class="note-label">
+          Optional note (a word or sentence)
+          <input type="text" id="mood-note" name="note" maxlength="120" placeholder="e.g. tired but hopeful" />
+        </label>
+        <button type="submit" class="btn btn-primary">Save today’s check-in</button>
+      </form>
+      <div class="mood-history-wrap">
+        <h3>Recent days</h3>
+        <ul id="mood-list" class="mood-list"></ul>
+      </div>
+    </section>
+
+    <section id="panel-wellness" class="panel" hidden aria-labelledby="wellness-heading">
+      <h2 id="wellness-heading">Gentle steps for low mood</h2>
+      <p class="panel-intro">When depression weighs on you, tiny actions still count. Choose what feels possible — even one is enough.</p>
+      <div class="wellness-grid">
+        <article class="wellness-card">
+          <h3>Routine &amp; light</h3>
+          <p>Open curtains, wash your face, or eat something small. Predictable mini-routines can soften the “stuck” feeling.</p>
+        </article>
+        <article class="wellness-card">
+          <h3>Movement</h3>
+          <p>A few minutes of walking or stretching can lift energy slightly — no pressure to “exercise,” just move kindly.</p>
+        </article>
+        <article class="wellness-card">
+          <h3>Breathing</h3>
+          <p>Slow breathing (longer exhale than inhale) can calm a tense body when anxiety rides along with low mood.</p>
+        </article>
+        <article class="wellness-card">
+          <h3>Grounding</h3>
+          <p>Name what you see and feel right now — it can shrink the feeling that everything is collapsing at once.</p>
+        </article>
+        <article class="wellness-card">
+          <h3>Connection</h3>
+          <p>One short message or call to someone safe, or a support line, breaks isolation — even when it’s hard to reach out.</p>
+        </article>
+        <article class="wellness-card">
+          <h3>Rest &amp; sleep</h3>
+          <p>Try a fixed wake time, dim screens before bed, or a nap timer — sleep and mood often feed each other.</p>
+        </article>
+        <article class="wellness-card">
+          <h3>Affirmation</h3>
+          <p id="affirmation-text">You deserve care, including from yourself.</p>
+          <button type="button" id="new-affirmation" class="btn btn-secondary">Another phrase</button>
+        </article>
+      </div>
+    </section>
+
+    <section id="panel-about" class="panel" hidden aria-labelledby="about-heading">
+      <h2 id="about-heading">Understanding depression</h2>
+      <p class="panel-intro">This page is for awareness only — it does not replace a clinician.</p>
+      <div class="about-content">
+        <p>Depression is more than “feeling sad.” It can show up as low energy, numbness, sleep or appetite changes, loss of interest, guilt, or trouble concentrating — often for weeks or longer. It is a common health condition and it is treatable.</p>
+        <p><strong>What helps many people:</strong> therapy (such as CBT or interpersonal therapy), lifestyle changes, social support, and sometimes medication prescribed by a doctor. What works varies; a professional can help you choose.</p>
+        <p><strong>How this site fits in:</strong> You can vent in the chat, track mood here, and try small wellness steps. For diagnosis, medication, or if symptoms are severe, please see a qualified mental health provider or physician.</p>
+        <p class="about-footnote">If you think you might hurt yourself, contact emergency services or a crisis line immediately.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Depression Support Companion — supportive tool only. Not for diagnosis or treatment; seek licensed professionals for medical care.</p>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
